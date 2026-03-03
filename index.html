@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Development Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial; padding:20px; max-width:600px; margin:auto; }
+    input { width:100%; padding:10px; margin-top:5px; margin-bottom:10px; }
+    button { width:100%; padding:14px; background:black; color:white; border:none; cursor:pointer; }
+    .box { border:1px solid #ddd; padding:15px; margin-top:15px; border-radius:10px;}
+  </style>
+</head>
+<body>
+
+<h2>Development Deal Calculator</h2>
+
+<h3>Financing</h3>
+<label>Project Length (months)</label>
+<input id="monthsInput" type="number">
+
+<label>Interest Rate (%)</label>
+<input id="interestInput" type="number">
+
+<label>LTV (%)</label>
+<input id="ltvInput" type="number">
+
+<label>Origination Fee (%)</label>
+<input id="origFeeInput" type="number">
+
+<h3>Acquisition</h3>
+<label>Purchase Price</label>
+<input id="purchaseInput" type="number">
+
+<label>Total Sale Price</label>
+<input id="saleInput" type="number">
+
+<h3>Construction</h3>
+<label>Total Sq Ft</label>
+<input id="sqftInput" type="number">
+
+<label>Build Cost per Sq Ft</label>
+<input id="buildCostInput" type="number">
+
+<label>Demolition (TOTAL $)</label>
+<input id="demoInput" type="number">
+
+<h3>Other</h3>
+<label>HOA per Month</label>
+<input id="hoaInput" type="number">
+
+<label>Wholesale Fee</label>
+<input id="wholesaleInput" type="number">
+
+<label>Additional Fees</label>
+<input id="additionalInput" type="number">
+
+<button onclick="calculate()">Calculate</button>
+
+<div class="box" id="results">Enter values and press Calculate.</div>
+
+<script>
+function money(x){ return "$" + Math.round(x).toLocaleString(); }
+
+function getVal(id){
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+
+function calculate(){
+
+let months = getVal("monthsInput");
+let interest = getVal("interestInput") / 100;
+let ltv = getVal("ltvInput") / 100;
+let origPct = getVal("origFeeInput") / 100;
+let purchase = getVal("purchaseInput");
+let sale = getVal("saleInput");
+let sqft = getVal("sqftInput");
+let buildCost = getVal("buildCostInput");
+let demo = getVal("demoInput");
+let hoa = getVal("hoaInput");
+let wholesale = getVal("wholesaleInput");
+let additional = getVal("additionalInput");
+
+let monthlyRate = interest / 12;
+
+let loan = purchase * ltv;
+let down = purchase * (1 - ltv);
+
+let totalBuild = (sqft * buildCost) + demo;
+
+let origFee = loan * origPct;
+
+let commission = sale * 0.04;
+let countyTax = 1.1 * (sale / 1000);
+let cityTax = 4.5 * (sale / 1000);
+let escrow = 0.0015 * sale;
+let title = 0.0014 * sale;
+
+let sellingCosts = commission + countyTax + cityTax + escrow + title + additional;
+
+let acquisitionHolding = loan * monthlyRate * months;
+let constructionHolding = totalBuild * monthlyRate * months;
+let propertyTax = ((0.0125 * purchase) / 12) * months;
+let hoaCost = hoa * months;
+
+let totalHolding = acquisitionHolding + constructionHolding + propertyTax + hoaCost;
+
+let totalProjectCost = totalBuild + totalHolding + wholesale + origFee;
+
+let profit = sale - sellingCosts - loan - totalProjectCost;
+
+let outOfPocket = down + origFee + wholesale + totalHolding;
+
+let returnPct = outOfPocket > 0 ? (profit / outOfPocket) * 100 : 0;
+
+document.getElementById("results").innerHTML = `
+<b>Loan:</b> ${money(loan)}<br>
+<b>Downpayment:</b> ${money(down)}<br>
+<b>Total Build Cost:</b> ${money(totalBuild)}<br>
+<b>Selling Costs:</b> ${money(sellingCosts)}<br>
+<b>Total Holding Costs:</b> ${money(totalHolding)}<br>
+<b>Origination Fee:</b> ${money(origFee)}<br>
+<hr>
+<h3>Profit: ${money(profit)}</h3>
+<h3>Return on Out of Pocket: ${returnPct.toFixed(2)}%</h3>
+`;
+}
+</script>
+
+</body>
+</html>
