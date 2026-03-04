@@ -5,87 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{font-family:Arial;padding:18px;max-width:920px;margin:auto;}
-h2{margin:0 0 8px;}
-h3{margin:18px 0 8px;}
-.card{border:1px solid #ddd;border-radius:14px;padding:14px;margin:14px 0;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-label{display:block;margin:10px 0 6px;font-size:13px;}
-input{width:100%;padding:10px;font-size:15px;border:1px solid #ccc;border-radius:10px;}
-button{width:100%;padding:14px;background:#111;color:white;border:none;border-radius:12px;margin-top:12px;}
-.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #eee;}
-.sectionTitle{font-weight:bold;margin-top:10px;}
+body{font-family:Arial;padding:20px;max-width:900px;margin:auto;}
+h2{margin-bottom:10px}
+.card{border:1px solid #ddd;border-radius:12px;padding:15px;margin-top:15px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:13px;margin-top:10px;display:block}
+input{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px}
+button{width:100%;padding:14px;margin-top:15px;background:#111;color:#fff;border:none;border-radius:10px}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #eee}
+.section{font-weight:bold;margin-top:12px}
 </style>
-</head>
 
+</head>
 <body>
 
 <h2>Development Deal Calculator</h2>
 
 <div class="card">
 
-<h3>Inputs</h3>
-
 <div class="grid">
 
 <div>
-<label>Project Length (months)</label>
+<label>Project Length (months) D6</label>
 <input id="D6" type="number">
 </div>
 
 <div>
-<label>Interest Rate</label>
+<label>Interest Rate D7</label>
 <input id="D7" type="number">
 </div>
 
 <div>
-<label>LTV</label>
+<label>LTV D9</label>
 <input id="D9" type="number">
 </div>
 
 <div>
-<label>Origination Fee %</label>
+<label>Origination Fee % D10</label>
 <input id="D10" type="number">
 </div>
 
 <div>
-<label>Purchase Price</label>
+<label>Purchase Price D12</label>
 <input id="D12" type="number">
 </div>
 
 <div>
-<label>Total Sale Price</label>
+<label>Total Sale Price D15</label>
 <input id="D15" type="number">
 </div>
 
 <div>
-<label>Additional Fees</label>
-<input id="D23_in" type="number">
-</div>
-
-<div>
-<label>Demolition</label>
+<label>Demolition D33</label>
 <input id="D33" type="number">
 </div>
 
 <div>
-<label>Build Cost / Sq Ft</label>
+<label>Build Cost per SqFt D34</label>
 <input id="D34" type="number">
 </div>
 
 <div>
-<label>Total Sq Ft</label>
+<label>Total SqFt D35</label>
 <input id="D35" type="number">
 </div>
 
 <div>
-<label>Wholesale Fee</label>
+<label>Wholesale Fee D48</label>
 <input id="D48" type="number">
 </div>
 
 <div>
-<label>HOA Fees</label>
-<input id="HOA_PM" type="number" value="700">
+<label>HOA Fee (variable)</label>
+<input id="HOA" type="number" value="700">
 </div>
 
 <div>
@@ -126,28 +118,27 @@ button{width:100%;padding:14px;background:#111;color:white;border:none;border-ra
 
 <div class="card">
 
-<h3>Results</h3>
-<div id="out"></div>
+<div id="results"></div>
 
 </div>
 
 <script>
 
 function num(id){
-let v=parseFloat(document.getElementById(id).value);
-return isNaN(v)?0:v;
+let v=parseFloat(document.getElementById(id).value)
+return isNaN(v)?0:v
 }
 
 function rate(v){
-return v>1?v/100:v;
+return v>1?v/100:v
 }
 
 function money(x){
-return "$"+Math.round(x).toLocaleString();
+return "$"+Math.round(x).toLocaleString()
 }
 
-function row(label,value){
-return `<div class="row"><div>${label}</div><div><b>${value}</b></div></div>`
+function row(label,val){
+return `<div class="row"><div>${label}</div><div><b>${val}</b></div></div>`
 }
 
 function calc(){
@@ -158,14 +149,13 @@ let D9=rate(num("D9"))
 let D10=rate(num("D10"))
 let D12=num("D12")
 let D15=num("D15")
-let D23=num("D23_in")
 
 let D33=num("D33")
 let D34=num("D34")
 let D35=num("D35")
 let D48=num("D48")
 
-let HOA=num("HOA_PM")
+let HOA=num("HOA")
 
 let COMM=rate(num("COMM"))
 let ESCROW=rate(num("ESCROW"))
@@ -176,7 +166,6 @@ let CTAX=num("CTAX")
 let CITYTAX=num("CITYTAX")
 
 let D8=D7/12
-
 let D29=D9*D12
 let D13=D10*D29
 
@@ -186,7 +175,7 @@ let D20=CITYTAX*(D15/1000)
 let D21=ESCROW*D15
 let D22=TITLE*D15
 
-let D24=D19+D20+D21+D22+D23
+let D24=D19+D20+D21+D22
 let D25=D18+D24
 let D26=D15-D25
 
@@ -209,41 +198,60 @@ let D47=D10*D29
 
 let D50=D30-D44-D46-D47-D48
 
-let denom=D43+D46+D47+D48
+let denom=D43+D46+D47+D48+D41+D42
 let D51=denom?D50/denom:0
 
-document.getElementById("out").innerHTML=
+document.getElementById("results").innerHTML=
 
-row("Monthly Rate", (D8*100).toFixed(2)+"%")+
-row("Origination Fee",money(D13))+
+row("Project Length (months)",D6)+
+row("Interest Rate",(D7*100).toFixed(2)+"%")+
+row("Monthly Rate",(D8*100).toFixed(2)+"%")+
+row("LTV",(D9*100).toFixed(2)+"%")+
+row("Origination Fee %",(D10*100).toFixed(2)+"%")+
+row("Purchase Price",money(D12))+
+row("Origination Fee $",money(D13))+
+row("Total Sale Price",money(D15))+
+
+`<div class="section">Selling Costs</div>`+
+
+row("Commissions",money(D18))+
+row("County Transfer Tax",money(D19))+
+row("City Transfer Tax",money(D20))+
+row("Escrow Fee",money(D21))+
+row("Title Insurance",money(D22))+
+row("Taxes & Fees",money(D24))+
 row("Total Selling Costs",money(D25))+
+row("Subtotal",money(D26))+
+
+`<div class="section">Loan Payoff</div>`+
+
 row("Loan Payoff",money(D29))+
 row("Subtotal",money(D30))+
 
-`<div class="sectionTitle">Construction</div>`+
+`<div class="section">Overhead</div>`+
 
+row("Demolition",money(D33))+
+row("Build Cost per SqFt",money(D34))+
+row("Total SqFt",money(D35))+
 row("Total Build Cost",money(D37))+
 row("Total Reno Cost",money(D38))+
-
-`<div class="sectionTitle">Holding Costs</div>`+
-
-row("Acquisition Holding",money(D39))+
-row("Construction Holding",money(D40))+
-row("HOA Fees",money(D41))+
+row("Acquisition Holding Cost",money(D39))+
+row("Construction Holding Cost",money(D40))+
+row("HOA Fee",money(D41))+
 row("Property Taxes",money(D42))+
 row("Total Holding Costs",money(D43))+
-
-`<div class="sectionTitle">Totals</div>`+
-
 row("Total Overhead",money(D44))+
+
+`<div class="section">Equity</div>`+
+
 row("Downpayment",money(D46))+
 row("Origination Fee",money(D47))+
 row("Wholesale Fee",money(D48))+
 
-`<div class="sectionTitle">Profit</div>`+
+`<div class="section">Bottom Line</div>`+
 
 row("Profit / Loss",money(D50))+
-row("Return on Out-of-Pocket",(D51*100).toFixed(2)+"%")
+row("Return on Out of Pocket",(D51*100).toFixed(2)+"%")
 
 }
 
