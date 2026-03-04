@@ -174,8 +174,9 @@ let D19=CTAX*(D15/1000)
 let D20=CITYTAX*(D15/1000)
 let D21=ESCROW*D15
 let D22=TITLE*D15
+let D23=2000
 
-let D24=D19+D20+D21+D22
+let D24=D19+D20+D21+D22+D23
 let D25=D18+D24
 let D26=D15-D25
 
@@ -219,6 +220,7 @@ row("County Transfer Tax",money(D19))+
 row("City Transfer Tax",money(D20))+
 row("Escrow Fee",money(D21))+
 row("Title Insurance",money(D22))+
+row("Additional Fees",money(D23))+
 row("Taxes & Fees",money(D24))+
 row("Total Selling Costs",money(D25))+
 row("Subtotal",money(D26))+
