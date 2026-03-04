@@ -4,194 +4,387 @@
   <title>Development Deal Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 850px; margin: auto; }
-    h2 { margin-bottom: 10px; }
-    h3 { margin-top: 20px; }
-    label { display:block; margin-top:10px; font-size:14px; }
-    input { width:100%; padding:10px; margin-top:5px; font-size:15px; box-sizing:border-box; }
-    button { width:100%; padding:14px; margin-top:20px; background:#111; color:white; border:none; font-size:16px; cursor:pointer; }
-    .card { border:1px solid #ddd; padding:15px; border-radius:12px; margin-top:15px; }
-    .row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #eee; }
-    .row:last-child { border-bottom:none; }
+    body { font-family: Arial, sans-serif; padding: 18px; max-width: 920px; margin: auto; }
+    h2 { margin: 0 0 8px; }
+    h3 { margin: 18px 0 8px; }
+    .subtle { color:#666; font-size: 13px; margin-bottom: 10px; }
+    .card { border: 1px solid #ddd; border-radius: 14px; padding: 14px; margin: 14px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display:block; margin: 10px 0 6px; font-size: 13px; color:#222; }
+    input { width: 100%; padding: 10px; font-size: 15px; box-sizing: border-box; border:1px solid #ccc; border-radius: 10px; }
+    button { width: 100%; padding: 14px; margin-top: 12px; background:#111; color:#fff; border:none; border-radius: 12px; cursor: pointer; font-size: 16px; }
+    .rows { margin-top: 6px; }
+    .row { display:flex; justify-content:space-between; gap: 14px; padding: 7px 0; border-bottom: 1px dashed #eee; }
+    .row:last-child { border-bottom: none; }
     .k { color:#333; }
-    .v { font-weight:700; text-align:right; }
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+    .v { font-weight: 700; text-align: right; }
+    .sectionTitle { font-weight: 700; margin-top: 10px; }
+    .pill { display:inline-block; padding: 3px 8px; border:1px solid #ddd; border-radius: 999px; font-size: 12px; color:#555; margin-left: 8px; }
+    small { color:#666; }
   </style>
 </head>
 <body>
 
 <h2>Development Deal Calculator</h2>
-
-<div class="card">
-<h3>Financing</h3>
-<div class="grid">
-<div>
-<label>Project Length (months) (D6)</label>
-<input id="months" type="number">
-</div>
-<div>
-<label>Interest Rate (%) (D7)</label>
-<input id="interestPct" type="number">
-</div>
-<div>
-<label>LTV (%) (D9)</label>
-<input id="ltvPct" type="number">
-</div>
-<div>
-<label>Origination Fee (%) (D10)</label>
-<input id="origPct" type="number">
-</div>
-</div>
-
-<h3>Acquisition</h3>
-<div class="grid">
-<div>
-<label>Purchase Price (D12)</label>
-<input id="purchase" type="number">
-</div>
-<div>
-<label>Total Sale Price (D15)</label>
-<input id="sale" type="number">
-</div>
-</div>
-
-<h3>Construction</h3>
-<div class="grid">
-<div>
-<label>Total Sq Ft</label>
-<input id="sqft" type="number">
-</div>
-<div>
-<label>Build Cost per Sq Ft</label>
-<input id="buildPerSqft" type="number">
-</div>
-<div>
-<label>Demolition (TOTAL $) (D33)</label>
-<input id="demoTotal" type="number">
-</div>
-</div>
-
-<h3>Other</h3>
-<div class="grid">
-<div>
-<label>HOA per Month</label>
-<input id="hoaPerMonth" type="number">
-</div>
-<div>
-<label>Wholesale Fee (D48)</label>
-<input id="wholesale" type="number">
-</div>
-<div>
-<label>Additional Fees (D23)</label>
-<input id="additionalFees" type="number">
-</div>
-<div>
-<label>Other Fees (D14)</label>
-<input id="otherFees" type="number">
-</div>
-<div>
-<label>Property Tax Rate (%)</label>
-<input id="propTaxPct" type="number">
-</div>
-<div>
-<label>Commission Rate (%)</label>
-<input id="commissionPct" type="number">
-</div>
-</div>
-
-<button onclick="calculate()">Calculate</button>
+<div class="subtle">
+  Mirrors your Excel sheet formula cells and order. Inputs start blank.
+  <span class="pill">Tip: % fields can be entered as 0.065 or 6.5</span>
 </div>
 
 <div class="card">
-<h3>Results (All Formula Cells)</h3>
-<div id="results">Enter inputs and click Calculate.</div>
+  <h3>Inputs (Variables)</h3>
+
+  <div class="grid">
+    <div>
+      <label>Project Length (months) (D6)</label>
+      <input id="D6" type="number" placeholder="e.g. 4">
+    </div>
+    <div>
+      <label>Interest Rate (D7)</label>
+      <input id="D7" type="number" step="0.0001" placeholder="e.g. 0.065 or 6.5">
+    </div>
+
+    <div>
+      <label>LTV (D9)</label>
+      <input id="D9" type="number" step="0.0001" placeholder="e.g. 0.80 or 80">
+    </div>
+    <div>
+      <label>Origination Fee % (D10)</label>
+      <input id="D10" type="number" step="0.0001" placeholder="e.g. 0.015 or 1.5">
+    </div>
+
+    <div>
+      <label>Purchase Price (D12)</label>
+      <input id="D12" type="number" placeholder="e.g. 975000">
+    </div>
+    <div>
+      <label>Other Fees (Unlabeled in sheet) (D14)</label>
+      <input id="D14" type="number" placeholder="e.g. 12000">
+    </div>
+
+    <div>
+      <label>Total Sale Price (D15)</label>
+      <input id="D15" type="number" placeholder="e.g. 1350000">
+    </div>
+    <div>
+      <label>Additional Fees (D23) (your sheet had 2000)</label>
+      <input id="D23_in" type="number" placeholder="e.g. 2000">
+    </div>
+
+    <div>
+      <label>Demolition (D33)</label>
+      <input id="D33" type="number" placeholder="e.g. 30000">
+    </div>
+    <div>
+      <label>Build Cost per Square Foot (D34)</label>
+      <input id="D34" type="number" placeholder="e.g. 20">
+    </div>
+
+    <div>
+      <label>Total Square Feet (D35)</label>
+      <input id="D35" type="number" placeholder="e.g. 2600">
+    </div>
+    <div>
+      <label>Wholesale Fee (D48)</label>
+      <input id="D48" type="number" placeholder="e.g. 15000">
+    </div>
+
+    <div>
+      <label>HOA per Month (replaces sheet’s fixed 700 for D41)</label>
+      <input id="HOA_PM" type="number" placeholder="e.g. 700">
+    </div>
+    <div>
+      <label>Property Tax Rate (replaces sheet’s fixed 1.25% for D42)</label>
+      <input id="PTAX" type="number" step="0.0001" placeholder="e.g. 0.0125 or 1.25">
+    </div>
+
+    <div>
+      <label>Commission Rate (replaces sheet’s fixed 4% for D18)</label>
+      <input id="COMM" type="number" step="0.0001" placeholder="e.g. 0.04 or 4">
+    </div>
+    <div>
+      <label>(Optional) Escrow Rate (sheet uses 0.15%)</label>
+      <input id="ESCROW" type="number" step="0.0001" placeholder="e.g. 0.0015">
+    </div>
+
+    <div>
+      <label>(Optional) Title Rate (sheet uses 0.14%)</label>
+      <input id="TITLE" type="number" step="0.0001" placeholder="e.g. 0.0014">
+    </div>
+    <div>
+      <label>(Optional) County Transfer $/1000 (sheet uses 1.1)</label>
+      <input id="CTAX" type="number" step="0.01" placeholder="e.g. 1.1">
+    </div>
+
+    <div>
+      <label>(Optional) City Transfer $/1000 (sheet uses 4.5)</label>
+      <input id="CITYTAX" type="number" step="0.01" placeholder="e.g. 4.5">
+    </div>
+    <div></div>
+  </div>
+
+  <button onclick="calc()">Calculate</button>
+</div>
+
+<div class="card">
+  <h3>Overhead (Right Side of Sheet)</h3>
+  <div class="subtle">These feed the H43 total (SUM H30:H40), shown on your sheet.</div>
+
+  <div class="grid">
+    <div>
+      <label>bath 1 (H30)</label>
+      <input id="H30" type="number" placeholder="e.g. 45000">
+    </div>
+    <div>
+      <label>bath 2 (H31)</label>
+      <input id="H31" type="number" placeholder="e.g. 30000">
+    </div>
+    <div>
+      <label>kitchen (H32)</label>
+      <input id="H32" type="number" placeholder="e.g. 30000">
+    </div>
+    <div>
+      <label>floors (H33)</label>
+      <input id="H33" type="number" placeholder="e.g. 15000">
+    </div>
+    <div>
+      <label>lighting (H34)</label>
+      <input id="H34" type="number" placeholder="e.g. 10000">
+    </div>
+    <div>
+      <label>Paint (H35)</label>
+      <input id="H35" type="number" placeholder="e.g. 10000">
+    </div>
+    <div>
+      <label>Staging (H36)</label>
+      <input id="H36" type="number" placeholder="e.g. 7000">
+    </div>
+    <div>
+      <label>(Optional) H37</label>
+      <input id="H37" type="number" placeholder="0">
+    </div>
+    <div>
+      <label>(Optional) H38</label>
+      <input id="H38" type="number" placeholder="0">
+    </div>
+    <div>
+      <label>(Optional) H39</label>
+      <input id="H39" type="number" placeholder="0">
+    </div>
+    <div>
+      <label>(Optional) H40</label>
+      <input id="H40" type="number" placeholder="0">
+    </div>
+    <div></div>
+  </div>
+
+  <div class="rows" id="overheadOut"></div>
+</div>
+
+<div class="card">
+  <h3>Results (All Formula Cells, Sorted Like the Sheet)</h3>
+  <div class="rows" id="out">
+    <small>Enter inputs and click Calculate.</small>
+  </div>
 </div>
 
 <script>
-function n(id){
-  let v = parseFloat(document.getElementById(id).value);
-  return isNaN(v) ? 0 : v;
-}
+  function num(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  }
 
-function money(x){
-  return "$" + Math.round(x).toLocaleString();
-}
+  // Accepts either decimal (0.065) or percent (6.5)
+  function rate(id, fallbackDecimal) {
+    let v = num(id);
+    if (!v && typeof fallbackDecimal === "number") v = fallbackDecimal;
+    return v > 1 ? (v / 100) : v; // 6.5 -> 0.065
+  }
 
-function calculate(){
+  function money(x) {
+    if (!isFinite(x)) x = 0;
+    return "$" + Math.round(x).toLocaleString();
+  }
 
-let months = n("months");
-let interest = n("interestPct") / 100;
-let ltv = n("ltvPct") / 100;
-let origPct = n("origPct") / 100;
-let purchase = n("purchase");
-let sale = n("sale");
+  function pct(x) {
+    if (!isFinite(x)) x = 0;
+    return (x * 100).toFixed(2) + "%";
+  }
 
-let sqft = n("sqft");
-let buildPerSqft = n("buildPerSqft");
-let demoTotal = n("demoTotal");
+  function row(label, value) {
+    return `<div class="row"><div class="k">${label}</div><div class="v">${value}</div></div>`;
+  }
 
-let hoaPerMonth = n("hoaPerMonth");
-let wholesale = n("wholesale");
-let additionalFees = n("additionalFees");
-let otherFees = n("otherFees");
+  function calc() {
+    // Inputs (variables)
+    const D6 = num("D6");
+    const D7 = rate("D7", 0);          // interest
+    const D9 = rate("D9", 0);          // LTV
+    const D10 = rate("D10", 0);        // orig fee %
+    const D12 = num("D12");            // purchase
+    const D14 = num("D14");            // other fees (unlabeled)
+    const D15 = num("D15");            // sale
+    const D23_in = num("D23_in");      // additional fees input
 
-let propTaxRate = n("propTaxPct") / 100;
-let commissionRate = n("commissionPct") / 100;
+    const D33 = num("D33");            // demo
+    const D34 = num("D34");            // build cost / sf
+    const D35 = num("D35");            // total sqft
+    const D48 = num("D48");            // wholesale
 
-// D8 Monthly Rate
-let monthlyRate = interest / 12;
+    // Rates with sheet defaults if user leaves blank
+    const COMM = rate("COMM", 0.04);
+    const ESCROW = rate("ESCROW", 0.0015);
+    const TITLE = rate("TITLE", 0.0014);
+    const CTAX = num("CTAX") || 1.1;
+    const CITYTAX = num("CITYTAX") || 4.5;
 
-// D37 Total Build Cost
-let buildTotal = (sqft * buildPerSqft) + demoTotal;
+    const HOA_PM = num("HOA_PM") || 700;        // sheet uses 700
+    const PTAX = rate("PTAX", 0.0125);          // sheet uses 1.25%
 
-// Selling Costs
-let commissions = sale * commissionRate;
-let countyTransferTax = 1.1 * (sale / 1000);
-let cityTransferTax = 4.5 * (sale / 1000);
-let escrowFee = 0.0015 * sale;
-let titleInsurance = 0.0014 * sale;
-let taxesAndFees = countyTransferTax + cityTransferTax + escrowFee + titleInsurance + additionalFees;
-let totalSellingCosts = commissions + taxesAndFees;
-let subtotalAfterSelling = sale - totalSellingCosts;
+    // ===== Overhead total (H43) =====
+    const H30 = num("H30"), H31 = num("H31"), H32 = num("H32"), H33 = num("H33"),
+          H34 = num("H34"), H35 = num("H35"), H36 = num("H36"),
+          H37 = num("H37"), H38 = num("H38"), H39 = num("H39"), H40 = num("H40");
 
-// Loan
-let loanPayoff = ltv * purchase;
-let subtotalAfterLoan = subtotalAfterSelling - loanPayoff;
+    const H43 = H30+H31+H32+H33+H34+H35+H36+H37+H38+H39+H40;
 
-// Holding
-let acquisitionHoldingCost = purchase * ltv * (monthlyRate * months);
-let constructionHoldingCost = (monthlyRate * months) * buildTotal;
-let hoaDues = hoaPerMonth * months;
-let propertyTaxes = ((propTaxRate * purchase) / 12) * months;
-let totalHoldingCosts = acquisitionHoldingCost + constructionHoldingCost + hoaDues + propertyTaxes;
+    document.getElementById("overheadOut").innerHTML =
+      row("<b>Total (H43 = SUM(H30:H40))</b>", money(H43));
 
-// Overhead
-let totalOverhead = buildTotal + totalHoldingCosts;
+    // ===== Formula cells from the Excel =====
 
-// Equity
-let downpayment = (1 - ltv) * purchase;
-let originationFee = origPct * loanPayoff;
+    // D8 = D7/12
+    const D8 = D7 / 12;
 
-// Profit
-let pl = subtotalAfterLoan - totalOverhead - downpayment - originationFee - otherFees - wholesale;
+    // D29 = D9*D12
+    const D29 = D9 * D12;
 
-// Return
-let denom = totalHoldingCosts + downpayment + originationFee + wholesale + otherFees + hoaDues + propertyTaxes;
-let returnOnOOP = denom !== 0 ? (pl / denom) : 0;
+    // D13 = (D10*D29)  (same as D47, but we show it because it's on the sheet)
+    const D13 = D10 * D29;
 
-document.getElementById("results").innerHTML = `
-<div class="row"><div class="k">Monthly Rate (D8)</div><div class="v">${(monthlyRate*100).toFixed(2)}%</div></div>
-<div class="row"><div class="k">Total Build Cost (D37)</div><div class="v">${money(buildTotal)}</div></div>
-<div class="row"><div class="k">Total Selling Costs (D25)</div><div class="v">${money(totalSellingCosts)}</div></div>
-<div class="row"><div class="k">Loan Payoff (D29)</div><div class="v">${money(loanPayoff)}</div></div>
-<div class="row"><div class="k">Total Holding Costs (D43)</div><div class="v">${money(totalHoldingCosts)}</div></div>
-<div class="row"><div class="k">Total Overhead (D44)</div><div class="v">${money(totalOverhead)}</div></div>
-<div class="row"><div class="k">Downpayment (D46)</div><div class="v">${money(downpayment)}</div></div>
-<div class="row"><div class="k">Origination Fee (D47)</div><div class="v">${money(originationFee)}</div></div>
-<div class="row"><div class="k"><b>P/L (D50)</b></div><div class="v">${money(pl)}</div></div>
-<div class="row"><div class="k"><b>Return on Out-of-Pocket (D51)</b></div><div class="v">${(returnOnOOP*100).toFixed(2)}%</div></div>
-`;
-}
+    // Selling costs section
+    // D18 = D15*0.04  (we allow COMM override but label as D18)
+    const D18 = D15 * COMM;
+
+    // D19 = 1.1*(D15/1000)
+    const D19 = CTAX * (D15 / 1000);
+
+    // D20 = 4.5*(D15/1000)
+    const D20 = CITYTAX * (D15 / 1000);
+
+    // D21 = 0.0015*D15
+    const D21 = ESCROW * D15;
+
+    // D22 = 0.0014*D15
+    const D22 = TITLE * D15;
+
+    // D23 in sheet is "=2000" but you want variable
+    const D23 = D23_in;
+
+    // D24 = SUM(D19:D23)
+    const D24 = D19 + D20 + D21 + D22 + D23;
+
+    // D25 = D18 + D24
+    const D25 = D18 + D24;
+
+    // D26 = D15 - D25
+    const D26 = D15 - D25;
+
+    // D30 = D26 - D29
+    const D30 = D26 - D29;
+
+    // D37 = (D35*D34) + D33  (your corrected rule)
+    const D37 = (D35 * D34) + D33;
+
+    // D38 = D37 + D33  (note: your sheet double-counts demo here; we match it)
+    const D38 = D37 + D33;
+
+    // D39 = D12*D9*(D8*D6)
+    const D39 = D12 * D9 * (D8 * D6);
+
+    // D40 = (D8*D6)*D38
+    const D40 = (D8 * D6) * D38;
+
+    // D41 = 700*D6 (we use HOA_PM, default 700)
+    const D41 = HOA_PM * D6;
+
+    // D42 = ((0.0125*D12)/12)*D6 (we use PTAX, default 0.0125)
+    const D42 = ((PTAX * D12) / 12) * D6;
+
+    // D43 = SUM(D39:D42)
+    const D43 = D39 + D40 + D41 + D42;
+
+    // D44 = SUM(D38+D43) => D38 + D43
+    const D44 = D38 + D43;
+
+    // D46 = (1-D9)*D12
+    const D46 = (1 - D9) * D12;
+
+    // D47 = (D10*D29)
+    const D47 = D10 * D29;
+
+    // D50 = D30 - D44 - D46 - D47 - D14 - D48
+    const D50 = D30 - D44 - D46 - D47 - D14 - D48;
+
+    // D51 = D50/(D43+D46+D47+D48+D14+D41+D42)
+    // (sheet double-counts HOA/PropTax in denom; we match it)
+    const denom = (D43 + D46 + D47 + D48 + D14 + D41 + D42);
+    const D51 = denom !== 0 ? (D50 / denom) : 0;
+
+    // ===== Output in the same order as the sheet =====
+    const out =
+      row("<b>Hard Money Financing</b>", "") +
+      row("Project Length (months) (D6)", D6 || 0) +
+      row("Interest Rate (D7)", pct(D7)) +
+      row("Monthly Rate (D8 = D7/12)", pct(D8)) +
+      row("LTV (D9)", pct(D9)) +
+      row("Origination Fee % (D10)", pct(D10)) +
+      row("Purchase Price (D12)", money(D12)) +
+      row("Origination Fee $ (D13 = D10*D29)", money(D13)) +
+      row("Other Fees (D14)", money(D14)) +
+      row("Total Sale Price (D15)", money(D15)) +
+
+      `<div class="sectionTitle">Selling Costs</div>` +
+      row("Commissions (D18)", money(D18)) +
+      row("County Transfer Tax (D19)", money(D19)) +
+      row("City Transfer Tax (D20)", money(D20)) +
+      row("Escrow Fee (D21)", money(D21)) +
+      row("Title Insurance (D22)", money(D22)) +
+      row("Additional Fees (D23)", money(D23)) +
+      row("Taxes & Fees (D24)", money(D24)) +
+      row("Total Selling Costs (D25)", money(D25)) +
+      row("Subtotal (D26)", money(D26)) +
+
+      `<div class="sectionTitle">Loan Payoff</div>` +
+      row("Loan Payoff (D29)", money(D29)) +
+      row("Subtotal (D30)", money(D30)) +
+
+      `<div class="sectionTitle">Overhead</div>` +
+      row("Demolition (D33)", money(D33)) +
+      row("Build Cost per Square Foot (D34)", money(D34)) +
+      row("Total Square Feet (D35)", money(D35)) +
+      row("Total Build Cost (D37 = D35*D34 + D33)", money(D37)) +
+      row("Total Reno Costs (D38 = D37 + D33)", money(D38)) +
+      row("Acquisition Holding Cost (D39)", money(D39)) +
+      row("Construction Holding Cost (D40)", money(D40)) +
+      row("HOA Dues (D41)", money(D41)) +
+      row("Property Taxes (D42)", money(D42)) +
+      row("Total Holding Costs (D43)", money(D43)) +
+      row("Total Overhead (D44)", money(D44)) +
+
+      `<div class="sectionTitle">Equity / Fees</div>` +
+      row("Downpayment (D46)", money(D46)) +
+      row("Origination Fee (D47)", money(D47)) +
+      row("Wholesale Fee (D48)", money(D48)) +
+
+      `<div class="sectionTitle">Bottom Line</div>` +
+      row("<b>P/L (D50)</b>", money(D50)) +
+      row("<b>Return on Out of Pocket Costs (D51)</b>", (D51 * 100).toFixed(2) + "%");
+
+    document.getElementById("out").innerHTML = out;
+  }
 </script>
 
 </body>
