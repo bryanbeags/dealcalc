@@ -51,6 +51,11 @@ button{width:100%;padding:14px;margin-top:15px;background:#111;color:#fff;border
 </div>
 
 <div>
+  <label>Purchase Closing Costs</label>
+  <input id="PURCHASE_CC" type="number">
+</div>
+
+<div>
 <label>Total Sale Price D15</label>
 <input id="D15" type="number">
 </div>
@@ -148,6 +153,7 @@ let D7=rate(num("D7"))
 let D9=rate(num("D9"))
 let D10=rate(num("D10"))
 let D12=num("D12")
+let PURCHASE_CC=num("PURCHASE_CC")
 let D15=num("D15")
 
 let D33=num("D33")
@@ -197,9 +203,9 @@ let D44=D38+D43
 let D46=(1-D9)*D12
 let D47=D10*D29
 
-let D50=D30-D44-D46-D47-D48
+let D50=D30-D44-D46-D47-D48-PURCHASE_CC
 
-let denom=D43+D46+D47+D48+D41+D42
+let denom=D43+D46+D47+D48+D41+D42+PURCHASE_CC
 let D51=denom?D50/denom:0
 
 document.getElementById("results").innerHTML=
@@ -248,6 +254,7 @@ row("Total Overhead",money(D44))+
 
 row("Downpayment",money(D46))+
 row("Origination Fee",money(D47))+
+row("Purchase Closing Costs",money(PURCHASE_CC))+
 row("Wholesale Fee",money(D48))+
 
 `<div class="section">Bottom Line</div>`+
